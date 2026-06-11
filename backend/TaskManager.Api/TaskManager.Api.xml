@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaskManager.Api</name>
+    </assembly>
+    <members>
+        <member name="T:TaskManager.Api.Controllers.TaskItemController">
+            <summary>
+            Endpoints para gerenciamento de tarefas.
+            </summary>
+        </member>
+        <member name="M:TaskManager.Api.Controllers.TaskItemController.#ctor(TaskManager.Application.Abstractions.ITaskService)">
+            <summary>
+            Endpoints para gerenciamento de tarefas.
+            </summary>
+        </member>
+        <member name="M:TaskManager.Api.Controllers.TaskItemController.CreateTask(TaskManager.Api.Requests.CreateTaskRequest)">
+            <summary>
+            Cria uma nova tarefa.
+            </summary>
+            <param name="request">Dados da tarefa a ser criada.</param>
+            <response code="200">Tarefa criada com sucesso.</response>
+            <response code="400">Dados da requisição inválidos.</response>
+        </member>
+        <member name="M:TaskManager.Api.Controllers.TaskItemController.GetAllTasks">
+            <summary>
+            Retorna todas as tarefas.
+            </summary>
+            <response code="200">Lista de tarefas retornada com sucesso.</response>
+        </member>
+        <member name="M:TaskManager.Api.Controllers.TaskItemController.GetTaskById(System.Int32)">
+            <summary>
+            Retorna uma tarefa pelo identificador.
+            </summary>
+            <param name="id">Identificador da tarefa.</param>
+            <response code="200">Tarefa encontrada e retornada com sucesso.</response>
+            <response code="404">Tarefa não encontrada.</response>
+        </member>
+        <member name="M:TaskManager.Api.Controllers.TaskItemController.UpdateTask(System.Int32,TaskManager.Api.Requests.UpdateTaskRequest)">
+            <summary>
+            Atualiza uma tarefa existente.
+            </summary>
+            <param name="id">Identificador da tarefa.</param>
+            <param name="request">Dados atualizados da tarefa.</param>
+            <response code="204">Tarefa atualizada com sucesso.</response>
+            <response code="400">Dados da requisição inválidos.</response>
+            <response code="404">Tarefa não encontrada.</response>
+        </member>
+        <member name="M:TaskManager.Api.Controllers.TaskItemController.DeleteTask(System.Int32)">
+            <summary>
+            Remove uma tarefa pelo identificador.
+            </summary>
+            <param name="id">Identificador da tarefa.</param>
+            <response code="204">Tarefa removida com sucesso.</response>
+            <response code="404">Tarefa não encontrada.</response>
+        </member>
+    </members>
+</doc>
