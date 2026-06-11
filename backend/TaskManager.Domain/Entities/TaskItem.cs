@@ -8,13 +8,13 @@ public class TaskItem : Entity
     private TaskItem()
     {
         Title = string.Empty;
-        Description = string.Empty;
+        Description = null;
         StartTime = DateTime.UtcNow;
         EndTime = DateTime.UtcNow;
         ItemStatus = TaskItemStatus.Pending;
     }
     
-    private TaskItem(string title, string description, DateTime? endTime, TaskItemStatus itemStatus)
+    private TaskItem(string title, string? description, DateTime? endTime, TaskItemStatus itemStatus)
     {
         Title = title;
         Description = description;
@@ -23,23 +23,16 @@ public class TaskItem : Entity
         ItemStatus = itemStatus;
     }
     
-    public static TaskItem Create(string title, string description, DateTime? endTime)
+    public static TaskItem Create(string title, string? description, DateTime? endTime)
     {
-        Validate(title, description, endTime, TaskItemStatus.Pending);
+        Validate(title, endTime, TaskItemStatus.Pending);
 
         return new TaskItem(title, description, endTime, TaskItemStatus.Pending);
     }
 
-    public static TaskItem Create(string title, string description, DateTime? endTime, TaskItemStatus itemStatus)
+    public void Update(string title, string? description, DateTime? endTime, TaskItemStatus itemStatus)
     {
-        Validate(title, description, endTime, itemStatus);
-
-        return new TaskItem(title, description, endTime, itemStatus);
-    }
-
-    public void Update(string title, string description, DateTime? endTime, TaskItemStatus itemStatus)
-    {
-        Validate(title, description, endTime, itemStatus);
+        Validate(title, endTime, itemStatus);
 
         Title = title;
         Description = description;
@@ -47,16 +40,13 @@ public class TaskItem : Entity
         ItemStatus = itemStatus;
     }
 
-    private static void Validate(string title, string description, DateTime? endTime, TaskItemStatus itemStatus)
+    private static void Validate(string title, DateTime? endTime, TaskItemStatus itemStatus)
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new DomainException("Title is required.");
 
         if (title.Length > 100)
             throw new DomainException("Title cannot be longer than 100 characters.");
-
-        if (string.IsNullOrWhiteSpace(description))
-            throw new DomainException("Description is required.");
 
         var normalizedEndTime = NormalizeToUtc(endTime);
         if (normalizedEndTime.HasValue && DateTime.UtcNow > normalizedEndTime.Value)
@@ -80,7 +70,7 @@ public class TaskItem : Entity
     }
 
     public string Title { get; private set; }
-    public string Description { get; private set; }
+    public string? Description { get; private set; }
     public DateTime StartTime { get; private set; } 
     public DateTime? EndTime { get; private set; }  
     public TaskItemStatus ItemStatus { get; private set; }

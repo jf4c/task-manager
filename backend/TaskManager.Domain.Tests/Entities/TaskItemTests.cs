@@ -20,9 +20,27 @@ public class TaskItemTests
     }
 
     [Fact]
+    public void Create_ShouldAllowEmptyDescription()
+    {
+        var result = TaskItem.Create("Task title", "", DateTime.UtcNow.AddHours(1));
+
+        result.Description.Should().BeEmpty();
+        result.ItemStatus.Should().Be(TaskItemStatus.Pending);
+    }
+
+    [Fact]
+    public void Create_ShouldAllowNullDescription()
+    {
+        var result = TaskItem.Create("Task title", null, DateTime.UtcNow.AddHours(1));
+
+        result.Description.Should().BeNull();
+        result.ItemStatus.Should().Be(TaskItemStatus.Pending);
+    }
+
+    [Fact]
     public void Create_ShouldThrowDomainException_WhenTitleIsEmpty()
     {
-        var action = () => TaskItem.Create("", "Task description", DateTime.UtcNow.AddHours(1), TaskItemStatus.Pending);
+        var action = () => TaskItem.Create("", "Task description", DateTime.UtcNow.AddHours(1));
 
         action.Should()
             .Throw<DomainException>()
@@ -33,7 +51,7 @@ public class TaskItemTests
     public void Create_ShouldThrowDomainException_WhenTitleIsLongerThan100Characters()
     {
         var title = new string('A', 101);
-        var action = () => TaskItem.Create(title, "Task description", DateTime.UtcNow.AddHours(1), TaskItemStatus.Pending);
+        var action = () => TaskItem.Create(title, "Task description", DateTime.UtcNow.AddHours(1));
 
         action.Should()
             .Throw<DomainException>()
@@ -41,19 +59,9 @@ public class TaskItemTests
     }
 
     [Fact]
-    public void Create_ShouldThrowDomainException_WhenDescriptionIsEmpty()
-    {
-        var action = () => TaskItem.Create("Task title", " ", DateTime.UtcNow.AddHours(1), TaskItemStatus.Pending);
-
-        action.Should()
-            .Throw<DomainException>()
-            .WithMessage("Description is required.");
-    }
-
-    [Fact]
     public void Create_ShouldThrowDomainException_WhenEndTimeIsInThePast()
     {
-        var action = () => TaskItem.Create("Task title", "Task description", DateTime.UtcNow.AddMinutes(-1), TaskItemStatus.Pending);
+        var action = () => TaskItem.Create("Task title", "Task description", DateTime.UtcNow.AddMinutes(-1));
 
         action.Should()
             .Throw<DomainException>()
@@ -61,10 +69,11 @@ public class TaskItemTests
     }
 
     [Fact]
-    public void Create_ShouldThrowDomainException_WhenStatusIsInvalid()
+    public void Update_ShouldThrowDomainException_WhenStatusIsInvalid()
     {
         var invalidStatus = (TaskItemStatus)999;
-        var action = () => TaskItem.Create("Task title", "Task description", DateTime.UtcNow.AddHours(1), invalidStatus);
+        var task = TaskItem.Create("Task title", "Task description", DateTime.UtcNow.AddHours(1));
+        var action = () => task.Update("Task title", "Task description", DateTime.UtcNow.AddHours(1), invalidStatus);
 
         action.Should()
             .Throw<DomainException>()
@@ -83,5 +92,25 @@ public class TaskItemTests
         task.Description.Should().Be("New description");
         task.EndTime.Should().Be(updatedEndTime);
         task.ItemStatus.Should().Be(TaskItemStatus.Running);
+    }
+
+    [Fact]
+    public void Update_ShouldAllowEmptyDescription()
+    {
+        var task = TaskItemFactory.GetMockedObject();
+
+        task.Update("New title", "", DateTime.UtcNow.AddHours(4), TaskItemStatus.Running);
+
+        task.Description.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Update_ShouldAllowNullDescription()
+    {
+        var task = TaskItemFactory.GetMockedObject();
+
+        task.Update("New title", null, DateTime.UtcNow.AddHours(4), TaskItemStatus.Running);
+
+        task.Description.Should().BeNull();
     }
 }

@@ -11,7 +11,7 @@ public static class TaskItemMapper
         return new CreateTaskDTO
         {
             Title = request.Title,
-            Description = request.Description ?? string.Empty,
+            Description = request.Description,
             EndDate = request.EndDate
         };
     }
@@ -22,7 +22,7 @@ public static class TaskItemMapper
         {
             Id = id,
             Title = request.Title,
-            Description = request.Description ?? string.Empty,
+            Description = request.Description,
             EndDate = request.EndDate,
             Status = request.Status
         };

@@ -80,7 +80,7 @@ export function TaskTable({
   };
 
   const descriptionBody = (row: TaskItem) => {
-    const text = row.description?.trim() || '—';
+    const text = row.description?.trim() || 'Sem descrição';
 
     return <span className="task-description-cell" title={text}>{text}</span>;
   };

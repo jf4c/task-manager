@@ -21,7 +21,7 @@ export const TaskItemStatusSeverity: Record<TaskItemStatus, string> = {
 export interface TaskItem {
   id: number;
   title: string;
-  description: string;
+  description?: string | null;
   startTime: string;
   endDate: string | null;
   status: TaskItemStatus;
@@ -29,14 +29,14 @@ export interface TaskItem {
 
 export interface CreateTaskPayload {
   title: string;
-  description?: string;
+  description?: string | null;
   endDate: string;
   status: TaskItemStatus;
 }
 
 export interface UpdateTaskPayload {
   title: string;
-  description?: string;
+  description?: string | null;
   endDate: string;
   status: TaskItemStatus;
 }

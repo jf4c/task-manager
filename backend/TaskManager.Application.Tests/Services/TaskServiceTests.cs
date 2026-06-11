@@ -37,6 +37,25 @@ public class TaskServiceTests
     }
 
     [Fact]
+    public async Task CreateAsync_ShouldPreserveNullDescription_WhenDescriptionIsOmitted()
+    {
+        var dto = TaskDTOFactory.CreateCreateTaskDTO();
+        dto.Description = null;
+        _taskRepositoryMock.MockITaskRepositoryAdd();
+
+        await _sut.CreateTaskAsync(dto);
+
+        _taskRepositoryMock.Verify(
+            repository => repository.AddTaskAsync(
+                It.Is<TaskItem>(task =>
+                    task.Title == dto.Title &&
+                    task.Description == null &&
+                    task.EndTime == dto.EndDate &&
+                    task.ItemStatus == TaskItemStatus.Pending)),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task UpdateAsync_ShouldUpdateTask_WhenDataIsValid()
     {
         const int taskId = 10;
@@ -64,14 +83,33 @@ public class TaskServiceTests
     }
 
     [Fact]
+    public async Task UpdateAsync_ShouldPreserveNullDescription_WhenDescriptionIsOmitted()
+    {
+        const int taskId = 10;
+        var existingTask = TaskItemFactory.GetMockedObject();
+        var dto = TaskDTOFactory.CreateUpdateTaskDTO(taskId);
+        dto.Description = null;
+
+        _taskRepositoryMock.MockITaskRepositoryGetById(taskId, existingTask);
+        _taskRepositoryMock.MockITaskRepositoryUpdate();
+
+        await _sut.UpdateTaskAsync(dto);
+
+        existingTask.Description.Should().BeNull();
+        _taskRepositoryMock.Verify(
+            repository => repository.UpdateTaskAsync(
+                It.Is<TaskItem>(task => ReferenceEquals(task, existingTask))),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task DeleteAsync_ShouldDeleteTask_WhenTaskExists()
     {
         const int taskId = 7;
         var existingTask = TaskItem.Create(
             "Task to delete",
             "Description",
-            DateTime.UtcNow.AddHours(1),
-            TaskItemStatus.Pending);
+            DateTime.UtcNow.AddHours(1));
 
         _taskRepositoryMock.MockITaskRepositoryGetById(taskId, existingTask);
         _taskRepositoryMock.MockITaskRepositoryDelete();
@@ -89,8 +127,8 @@ public class TaskServiceTests
         var task = TaskItem.Create(
             mockedDTO.Title,
             mockedDTO.Description,
-            DateTime.UtcNow.AddHours(5),
-            TaskItemStatus.Completed);
+            DateTime.UtcNow.AddHours(5));
+        task.Update(task.Title, task.Description, task.EndTime, TaskItemStatus.Completed);
 
         _taskRepositoryMock.MockITaskRepositoryGetById(taskId, task);
 
@@ -110,8 +148,8 @@ public class TaskServiceTests
         var task = TaskItem.Create(
             mockedDTO.Title,
             mockedDTO.Description,
-            DateTime.UtcNow.AddHours(2),
-            TaskItemStatus.Running);
+            DateTime.UtcNow.AddHours(2));
+        task.Update(task.Title, task.Description, task.EndTime, TaskItemStatus.Running);
 
         _taskRepositoryMock.MockITaskRepositoryGetById(task);
 

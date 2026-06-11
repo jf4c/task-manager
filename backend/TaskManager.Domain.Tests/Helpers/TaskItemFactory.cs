@@ -19,8 +19,12 @@ internal static class TaskItemFactory
             var description = x.Lorem.Sentences(2);
             var endTime = x.Date.Soon(30).ToUniversalTime();
             var status = x.PickRandom<TaskItemStatus>();
+            var task = TaskItem.Create(title, description, endTime);
 
-            return TaskItem.Create(title, description, endTime, status);
+            if (status != TaskItemStatus.Pending)
+                task.Update(title, description, endTime, status);
+
+            return task;
         });
 
         return fake.Generate(quantity);
